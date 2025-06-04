@@ -1,0 +1,35 @@
+name: Deploy Telegram Bot (utsqrbot) to VPS
+
+on:
+  push:
+    branches:
+      - main  # Change this if needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      - name: Add VPS to known_hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS via rsync
+        run: |
+          rsync -az --delete ./ root@${{ secrets.VPS_HOST }}:/var/www/utsqrbot/
+
+      - name: Restart PM2 Bot
+        run: |
+          ssh -i ~/.ssh/id_ed25519 root@${{ secrets.VPS_HOST }} << 'EOF'
+            cd /var/www/utsqrbot
+            npm install --legacy-peer-deps
+            pm2 restart utsqrbot || pm2 start npm --name "utsqrbot" -- start
+          EOF
