@@ -59,7 +59,7 @@ bot.on('text', (ctx) => {
 
     // Otherwise, not found
     ctx.replyWithMarkdownV2(
-        "🚫 Station not found\\. Please check the spelling and try again\\. \n\nIf you're at the station, please [upload the QR code](https://utsstationqrcode\\.com/upload\\-code/), so You & Other can access it Next Time 😊\\."
+        "🚫 Station not found\\. Please check the spelling or Type only Station Name or Staion Code and try again\\. \n\ Or Visit Our Website to find Your Station UTS QR Code [UTS Station QR Code](https://utsstationqrcode\\.com/) 😊\\."
       );
       
 });
